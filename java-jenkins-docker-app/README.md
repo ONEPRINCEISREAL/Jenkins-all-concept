@@ -183,11 +183,12 @@ pipeline {
 
 Make sure the following tools are installed:
 
-* Java 17 or higher
-* Apache Maven
-* Docker
-* Docker Compose
-* Jenkins (for CI/CD execution)
+
+* - [Java 17+](https://adoptium.net/)
+* - [Apache Maven](https://maven.apache.org/)
+* - [Docker](https://docs.docker.com/get-docker/)
+* - [Docker Compose](https://docs.docker.com/compose/)
+* - [Jenkins](https://www.jenkins.io/) (optional for CI/CD testing)
 
 ---
 
