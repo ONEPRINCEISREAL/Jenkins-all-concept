@@ -186,7 +186,7 @@ Make sure the following tools are installed:
 
 * - [Java 17+](https://adoptium.net/)
 * - [Apache Maven](https://maven.apache.org/)
-* - [Docker](https://docs.docker.com/get-docker/)
+* - [Docker](https://hub.docker.com/)
 * - [Docker Compose](https://docs.docker.com/compose/)
 * - [Jenkins](https://www.jenkins.io/) (optional for CI/CD testing)
 
