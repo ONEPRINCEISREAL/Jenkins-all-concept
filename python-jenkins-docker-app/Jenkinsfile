@@ -1,65 +1,70 @@
 pipeline {
     agent any
+
+    environment {
+        IMAGE_NAME = "kappapvt/python-app"
+    }
+
     stages {
-        stage('Clone Github Repository') {
+
+        stage('Git Clone') {
             steps {
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/theshubhamgour/jenkins-tutorial.git'
-                sh 'pwd'
+                git branch: 'main',
+                    changelog: false,
+                    poll: false,
+                    url: 'https://github.com/ONEPRINCEISREAL/Jenkins-all-concept.git'
             }
-        }        
-        stage('Build') {
+        }
+
+        stage('Compile Python') {
             steps {
-                dir('4-python-jenkins-docker-app') {
+                dir('python-jenkins-docker-app') {
                     sh 'python3 -m py_compile app.py'
                 }
             }
         }
-        stage('Test') {
+
+        stage('Unit Test') {
             steps {
-                dir('4-python-jenkins-docker-app') {
+                dir('python-jenkins-docker-app') {
                     sh 'python3 -m unittest discover tests'
+                }
+            }
+        }
+
+        stage('Local Run') {
+            steps {
+                dir('python-jenkins-docker-app') {
+                    sh 'python3 app.py'
                 }
             }
         }
         stage('Docker Build') {
             steps {
-                dir('4-python-jenkins-docker-app') {
-                    sh 'docker build -t python-app:latest .'
+                dir('python-jenkins-docker-app') {
+                    sh 'docker build -t python-jenkins-docker:latest .'
                 }
             }
         }
         stage('Docker Run') {
             steps {
-                dir('4-python-jenkins-docker-app') {
-                    sh 'docker run --rm python-app:latest'
-                }
+                sh 'docker run --rm python-jenkins-docker:latest'
             }
-        } 
-        stage('Docker Tag & Push') {
+        }
+        stage('Docker Login') {
             steps {
-                dir('4-python-jenkins-docker-app') {
-                    withCredentials([usernamePassword(credentialsId: 'theshubhamgour',
-                                                      passwordVariable: 'DockerhubPassword',
-                                                      usernameVariable: 'DockerhubUserName')]) {
-                        sh '''
-                            echo "$DockerhubPassword" | docker login -u "$DockerhubUserName" --password-stdin
-                            docker tag python-app:latest theshubhamgour/python-app:latest
-                            docker push theshubhamgour/python-app:latest
-                        '''
-                    }
+                withCredentials([usernamePassword(
+                    credentialsId: 'kappapvt',
+                    passwordVariable: 'DOCKER_PASS',
+                    usernameVariable: 'DOCKER_USER'
+                )]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker tag python-app:latest kappapvt/python-app:latest
+                    docker push kappapvt/python-app:latest
+                    '''
                 }
             }
-        }         
-    }
-    post {
-        always {
-            cleanWs()
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
