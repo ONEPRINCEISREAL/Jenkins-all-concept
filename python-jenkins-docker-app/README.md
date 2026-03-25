@@ -42,7 +42,7 @@ Since Python is interpreted, compilation is not mandatory.
 However, syntax verification and bytecode generation can be performed using:
 
 ```bash
-python -m py_compile app.py
+python3 -m py_compile app.py
 ```
 
 ---
@@ -52,7 +52,7 @@ python -m py_compile app.py
 Run automated unit tests to confirm expected functionality:
 
 ```bash
-python -m unittest discover tests
+python3 -m unittest discover tests
 ```
 
 ---
@@ -62,7 +62,7 @@ python -m unittest discover tests
 Execute the program directly on your local system:
 
 ```bash
-python app.py
+python3 app.py
 ```
 
 **Expected Output:**
