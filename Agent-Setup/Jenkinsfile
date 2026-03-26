@@ -1,0 +1,69 @@
+pipeline {
+    agent { label 'worker-node' }
+    environment {
+        IMAGE_NAME = "kappapvt/python-app"
+    }
+
+    stages {
+
+        stage('Git Clone') {
+            steps {
+                git branch: 'main',
+                    changelog: false,
+                    poll: false,
+                    url: 'https://github.com/ONEPRINCEISREAL/Jenkins-all-concept.git'
+            }
+        }
+
+        stage('Compile Python') {
+            steps {
+                dir('python-jenkins-docker-app') {
+                    sh 'python3 -m py_compile app.py'
+                }
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                dir('python-jenkins-docker-app') {
+                    sh 'python3 -m unittest discover tests'
+                }
+            }
+        }
+
+        stage('Local Run') {
+            steps {
+                dir('python-jenkins-docker-app') {
+                    sh 'python3 app.py'
+                }
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                dir('python-jenkins-docker-app') {
+                    sh 'docker build -t python-jenkins-docker:latest .'
+                }
+            }
+        }
+        stage('Docker Run') {
+            steps {
+                sh 'docker run --rm python-jenkins-docker:latest'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'kappapvt',
+                    passwordVariable: 'DOCKER_PASS',
+                    usernameVariable: 'DOCKER_USER'
+                )]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker tag python-app:latest kappapvt/python-app:latest
+                    docker push kappapvt/python-app:latest
+                    '''
+                }
+            }
+        }
+    }
+}
