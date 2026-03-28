@@ -1,0 +1,13 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Docker Cred') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerhubPass', usernameVariable: 'DockerhubUser')]) {
+               echo "This is the Docker Username : ${DockerhubUser}"
+                }
+            }
+        }
+    }
+}

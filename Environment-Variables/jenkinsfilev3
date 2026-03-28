@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+    environment{
+        DOCKER_IMAGE = 'kappapvt/python-app:latest'
+        APP_NAME = 'kappapvt/python-app'
+        TAG_VERSION = 'v1.0.0'
+    }
+
+    stages {
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'DockerHub', passwordVariable: 'DockerPass', usernameVariable: 'DockerUser')]) {
+                echo 'Loggin into Docker Hub'
+                 sh '''
+                        echo "$DockerPass" | docker login -u "$DockerUser" --password-stdin
+                    '''
+                echo 'Docker loggin complete sccessfully'
+                }
+            }
+        }
+        stage('Docker Pull'){
+            steps {
+                echo "Pulling Docekr Image"
+                sh "docker pull ${DOCKER_IMAGE}"
+                echo "Docker pull completed successfully"
+            }
+        }
+        stage('Docker tag'){
+            steps {
+                echo "Docker image tagging in process"
+                sh "docker tag ${DOCKER_IMAGE} ${APP_NAME}:${TAG_VERSION}"
+                echo "Docker image tagging completed successfully"
+            }
+        }
+        stage('Docker Push'){
+            steps {
+                echo "Docker image push in process"
+                sh "docker push ${APP_NAME}:${TAG_VERSION}"
+                echo "Docker image push completed successfully"
+            }
+        }
+    }
+}
