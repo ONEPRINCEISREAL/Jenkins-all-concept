@@ -58,22 +58,11 @@ pipeline {
         sh '''
           docker stop maven-demo || true
           docker rm maven-demo || true
-
           docker run -d --name maven-demo $IMAGE_NAME:${BUILD_NUMBER}
-
-          sleep 3
-          docker logs maven-demo
         '''
       }
     }
 
-    stage('Cleanup') {
-      steps {
-        sh '''
-          docker rmi $IMAGE_NAME:${BUILD_NUMBER} || true
-        '''
-      }
-    }
   }
 
   post {
