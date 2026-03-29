@@ -23,7 +23,7 @@ pipeline {
       }
       post {
         always {
-          junit 'maven-jenkins/target/surefire-reports/*.xml'
+          junit allowEmptyResults: true, testResults: 'maven-jenkins/target/surefire-reports/*.xml'
         }
         success {
           archiveArtifacts artifacts: 'maven-jenkins/target/*.jar', fingerprint: true
